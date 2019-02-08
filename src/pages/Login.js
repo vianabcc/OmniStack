@@ -1,30 +1,61 @@
 import React, { Component } from 'react';
+import { 
+  AsyncStorage,
+  KeyboardAvoidingView,
+  TouchableOpacity,
+  TextInput,
+  View,
+  Text,
+  StyleSheet
+} from 'react-native'; 
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { KeyboardAvoidingView, Text, TextInput, TouchableOpacity, StyleSheet,
-         View } from 'react-native'; 
- 
-export default class Login extends Component { 
+
+export default class Login extends Component {
+  state = {
+    username: "",
+  };
+
+  async componentDidMount(){
+    const username = await AsyncStorage.getItem('@OmniStack:username');
+
+    if(username) {
+      this.props.navigation.navigate('App');
+    }
+  };
+
+  handleInputChange = username => (this.setState({ username }));
+  
+  handleLogin = async () => {
+    const { username } = this.state;
+    if(!username.length) return;
+
+    await AsyncStorage.setItem('@OmniStack:username', username);
+    
+    this.props.navigation.navigate('App');
+  };
+
   render() {
     return (
-        <KeyboardAvoidingView behavior="padding" style={styles.container}>
+      <KeyboardAvoidingView bahavior="padding" style={styles.container}>
         <View style={styles.content}>
-          
-          <View> 
-           <Icon name="twitter" size={64} color="#4BB0EE" />
+          <View>
+            <Icon name="twitter" size={64} color="#4BB0EE" />
           </View>
-           
-          <TextInput 
-            style={styles.input}
+
+          <TextInput style={styles.input}
             placeholder="Nome de usuário"
-            //value={}
+            value = { this.state.username }
+            onChangeText = {this.handleInputChange}
+            onSubmitEditing={this.handleLogin}
             returnKeyType="send"
-            />
- 
-          <TouchableOpacity onPress={() => {}} style={styles.button} >
-            <Text style={buttonText}>Entrar</Text>
+          />
+
+          <TouchableOpacity onPress={this.handleLogin} style={styles.button}>
+            <Text style={styles.buttonText}>Entrar</Text> 
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
+      
     );
   }
 }
@@ -32,9 +63,9 @@ export default class Login extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF"
+    backgroundColor: "#FFF" 
   },
- 
+
   content: {
     flex: 1,
     justifyContent: "center",
