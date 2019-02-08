@@ -1,1 +1,1 @@
-# omnistackrn
+#react-native-omnistack
